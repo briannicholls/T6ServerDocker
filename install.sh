@@ -31,15 +31,15 @@ if [[ $UID != 0 ]]; then
 fi
 
 # Check if we are running in interactive mode
-if [ "$INTERACTIVE" = "yes" ]; then
+# if [ "$INTERACTIVE" = "yes" ]; then
     # # Language selection
     # showLogo
-    selectLanguage
+    # selectLanguage
 
     # # Ask for installation options
     # showLogo
     # confirmInstallations
-fi
+# fi
 
 # Update the system
 # Ensures the system is up-to-date before proceeding with the installation
