@@ -15,11 +15,6 @@
 
 This project provides a Dockerized solution for running a Plutonium Call of Duty: Black Ops II dedicated server. It is based on the excellent [T6Server installer by Sterbweise](https://github.com/Sterbweise/T6Server), adapted to run in a self-contained Docker container. This simplifies setup, configuration, and deployment, allowing you to get a server running with just a few commands.
 
-The `install.sh` script from the original repository has been modified to run non-interactively within the Docker build. If you wish to run the installer manually in an interactive mode (for example, on a non-Docker system), you can do so by setting the `INTERACTIVE` environment variable:
-```bash
-sudo INTERACTIVE=yes ./install.sh
-```
-
 ## Table of Contents
 
 - [T6 Server - Dockerized Plutonium Black Ops II Server](#t6-server---dockerized-plutonium-black-ops-ii-server)
