@@ -13,47 +13,26 @@ fi
 
 # Function to install dependencies
 installDependencies() {
-    {
-        apt-get update
-        # Install system utilities
-        apt-get install -y \
-            sudo \
-            aria2 \
-            tar \
-            wget \
-            gnupg2 \
-            software-properties-common \
-            apt-transport-https \
-            curl \
-            rsync \
-            procps
-
-        # Install required libraries
-        apt-get install -y \
-            libssl1.1 \
-            libcurl4 \
-            libc6:i386 \
-            libstdc++6:i386
-
-    } > /dev/null 2>&1 &
-    showProgressIndicator "$(getMessage "dependencies_install")"
-    
-    # Verify installation
-    if ! command -v wget &> /dev/null || ! command -v gpg &> /dev/null || ! command -v curl &> /dev/null || ! dpkg -s software-properties-common &> /dev/null || ! dpkg -s apt-transport-https &> /dev/null
-    then
-        printf "${COLORS[RED]}Error:${COLORS[RESET]} Dependencies installation failed.\n"
-        printf "Attempting reinstallation...\n"
-        apt-get install -y sudo wget gnupg2 software-properties-common apt-transport-https curl
-        if ! command -v wget &> /dev/null || ! command -v gpg &> /dev/null || ! command -v curl &> /dev/null || ! dpkg -s software-properties-common &> /dev/null || ! dpkg -s apt-transport-https &> /dev/null
-        then
-            printf "${COLORS[RED]}Error:${COLORS[RESET]} Reinstallation failed. Please check your internet connection and try again.\n"
-            exit 1
-        fi
-    fi
-    
-    if [ "$1" = "--install" ]; then
-        printf "${COLORS[GREEN]}Success:${COLORS[RESET]} Dependencies have been installed.\n"
-    fi
+    echo "Installing dependencies..."
+    apt-get install -y \
+        dialog \
+        jq \
+        iproute2 \
+        net-tools \
+        curl \
+        wget \
+        sudo \
+        gnupg2 \
+        ca-certificates \
+        unzip \
+        nano \
+        xz-utils \
+        screen \
+        git \
+        rsync \
+        aria2 \
+        procps
+    echo "Dependency installation finished."
 }
 
 # Run the installation function if --install is provided

@@ -1,201 +1,189 @@
-# T6 Server - Plutonium Black Ops II Server Installer
+# T6 Server - Dockerized Plutonium Black Ops II Server
 
-![Version](https://img.shields.io/badge/Version-3.1.1-blue)
-![Debian](https://img.shields.io/badge/Debian-10%20%7C%2011%20%7C%2012-brightgreen?showLogo=Debian)
+![Version](https://img.shields.io/badge/Version-3.1.1--dockerized-blue)
+![Docker](https://img.shields.io/badge/Docker-Required-blue?logo=docker)
 ![Plutonium T6](https://img.shields.io/badge/Plutonium-T6-blue)
 ![License](https://img.shields.io/badge/License-GPL--3.0-yellow)
 ![GitHub repo size](https://img.shields.io/github/repo-size/Sterbweise/T6Server)
 ![GitHub stars](https://img.shields.io/github/stars/Sterbweise/T6Server)
 ![GitHub forks](https://img.shields.io/github/forks/Sterbweise/T6Server)
-![GitHub issues](https://img.shields.io/github/issues/Sterbweise/T6Server)
-![GitHub last commit](https://img.shields.io/github/last-commit/Sterbweise/T6Server)
 
 <div style="display: flex; align-items: center;">
     <img src="https://github.com/user-attachments/assets/3ee17ff5-25fa-494e-b874-610507794756" alt="image" width="400"/>
     <img src="https://imgur.com/bBrx8Hf.png" alt="Plutonium showLogo" width="400" style="margin-left: 10px;"/>
 </div>
 
-T6 Server is a comprehensive management suite for setting up and running Plutonium Call of Duty: Black Ops II servers on Debian-based systems. This project aims to simplify the process of installing, configuring, and managing T6 servers, making it accessible to both beginners and experienced server administrators.
+This project provides a Dockerized solution for running a Plutonium Call of Duty: Black Ops II dedicated server. It is based on the excellent [T6Server installer by Sterbweise](https://github.com/Sterbweise/T6Server), adapted to run in a self-contained Docker container. This simplifies setup, configuration, and deployment, allowing you to get a server running with just a few commands.
 
-<center><b>Full video tutorial:</b> https://www.youtube.com/watch?v=iuTV-8hCv7M</center>
+The `install.sh` script from the original repository has been modified to run non-interactively within the Docker build. If you wish to run the installer manually in an interactive mode (for example, on a non-Docker system), you can do so by setting the `INTERACTIVE` environment variable:
+```bash
+sudo INTERACTIVE=yes ./install.sh
+```
 
 ## Table of Contents
 
-- [T6 Server - Plutonium Black Ops II Server Installer](#t6-server---plutonium-black-ops-ii-server-installer)
+- [T6 Server - Dockerized Plutonium Black Ops II Server](#t6-server---dockerized-plutonium-black-ops-ii-server)
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
   - [Prerequisites](#prerequisites)
-    - [System Requirements](#system-requirements)
-    - [Software Requirements](#software-requirements)
-    - [Network Requirements](#network-requirements)
-    - [Additional Considerations](#additional-considerations)
-  - [Installation](#installation)
-  - [Configuration](#configuration)
-    - [New Server Parameters](#new-server-parameters)
-    - [Default Ports](#default-ports)
+  - [Getting Started](#getting-started)
+    - [1. Clone the Repository](#1-clone-the-repository)
+    - [2. Configure the Server in Dockerfile](#2-configure-the-server-in-dockerfile)
+    - [3. Build the Docker Image](#3-build-the-docker-image)
+    - [4. Run the Container](#4-run-the-container)
+    - [5. Access and Manage the Server](#5-access-and-manage-the-server)
+    - [6. Start the Server](#6-start-the-server)
+  - [Server Management](#server-management)
+    - [Viewing Logs and Console](#viewing-logs-and-console)
+    - [Stopping the Server](#stopping-the-server)
+    - [Customizing Your Server](#customizing-your-server)
+  - [Advanced Configuration](#advanced-configuration)
+    - [Custom Mods and Maps](#custom-mods-and-maps)
     - [Directory Structure](#directory-structure)
-    - [File Organization](#file-organization)
-      - [Custom Mods](#custom-mods)
-      - [Custom Maps](#custom-maps)
-  - [Launching the Server](#launching-the-server)
   - [Troubleshooting](#troubleshooting)
-    - [Wine Display Errors](#wine-display-errors)
-    - [Unable to Load Import from binkw32.dll](#unable-to-load-import-from-binkw32dll)
-    - [Server Not Appearing in Plutonium Server List](#server-not-appearing-in-plutonium-server-list)
-    - [Authentication Issues](#authentication-issues)
   - [Documentation](#documentation)
   - [Contributing](#contributing)
-    - [Submitting Pull Requests](#submitting-pull-requests)
-    - [Ideas for Contributions](#ideas-for-contributions)
-    - [Reporting Issues](#reporting-issues)
-    - [Improving Documentation](#improving-documentation)
-    - [Code Review](#code-review)
-  - [Roadmap](#roadmap)
-    - [Short-term Goals (1-3 months)](#short-term-goals-1-3-months)
-    - [Medium-term Goals (3-6 months)](#medium-term-goals-3-6-months)
   - [License](#license)
   - [Acknowledgements](#acknowledgements)
   - [Support](#support)
 
 ## Features
-- Easy installation and uninstallation process
-- Automated system updates and dependency management 
-- Firewall configuration and management with UFW
-- Wine installation for Windows application support
-- .NET Framework installation for IW4MAdmin support
-- Multi-language support (English and French)
-- Server binary installation and configuration
-- User-friendly command-line interface
-- MOD support with custom maps and game modes
-- Advanced server configuration options
-- Automatic server monitoring and resource tracking
-- CPU and memory usage limits
-- Detailed installation/uninstallation summaries
-- System health monitoring and reporting
-- Comprehensive logging and error handling
-- Performance optimization tools
+- **Easy Deployment:** Run a full T6 server with a single `docker run` command.
+- **Self-Contained:** All dependencies (like Wine) are managed within the Docker image.
+- **Configurable:** Easily configure your server using environment variables in the `Dockerfile`.
+- **Reproducible:** Get the exact same server environment every time you build the image.
+- **Based on T6Server:** Includes the robust features from the original T6Server installer.
+- **MOD Support:** Easily add custom maps and mods using Docker volumes.
 
 ## Prerequisites
+- **Docker:** You must have Docker installed on your system. Visit the [official Docker website](https://www.docker.com/get-started) for installation instructions.
+- **Git:** For cloning the repository.
+- **Plutonium Server Key:** You need a server key from the [Plutonium website](https://platform.plutonium.pw/serverkeys).
 
-### System Requirements
-- **Operating System:** Debian 10, 11, or 12 (64-bit)
-- **Architecture:** x86_64 (AMD64)
-- **RAM:** Minimum 512MB, 2GB recommended
-- **Storage:** At least 15GB of free disk space
+## Getting Started
 
-### Software Requirements
-- **Root Access:** Full system privileges (root or sudo)
-- **Package Manager:** apt (comes pre-installed on Debian)
-- **Git:** For cloning the repository
+Follow these steps to get your server up and running.
 
-If you don't have sudo or git installed, you can install them as follows:
+### 1. Clone the Repository
+```bash
+# Make sure to use the URL for your forked repository
+git clone https://github.com/bfive/T6ServerDocker.git
+cd T6ServerDocker
+```
 
-1. To install sudo (as root):
-   ```bash
-   apt install sudo
+### 2. Configure the Server in Dockerfile
+Open the `Dockerfile` in a text editor. Find the `USER CONFIGURATION` section and set your `SERVER_NAME` and, most importantly, your `SERVER_KEY`.
+
+You **must** replace `"YOUR_KEY_HERE"` with your actual key from the Plutonium website.
+
+### 3. Build the Docker Image
+This command builds your Docker image. This may take some time on the first run, but subsequent builds will be much faster thanks to caching.
+
+```bash
+docker build -t t6-server .
+```
+
+### 4. Run the Container
+This command starts your container in the background. All configuration is now read directly from the `Dockerfile`.
+
+```bash
+docker run -d \
+  --name my-t6-server \
+  -p 4976:4976/udp \
+  t6-server
+```
+
+### 5. Access and Manage the Server
+Now you can get a `bash` shell inside the running container to manage your server.
+
+```bash
+docker exec -it my-t6-server bash
+```
+All environment variables are now set directly from the `Dockerfile`.
+
+### 6. Start the Server
+For clarity and good practice, it's best to first navigate to the script's directory before running it.
+
+```bash
+# Navigate to the directory containing the server script
+cd /opt/T6Server/Plutonium
+
+# Launch the server
+./T6Server.sh
+```
+Your server is now running!
+
+## Server Management
+
+### Viewing Logs and Console
+If you follow the steps above, the server console will be attached to your `docker exec` session. If you detach from the session, you can re-attach to view the console:
+```bash
+docker attach my-t6-server
+```
+
+### Stopping the Server
+To stop the server container completely:
+```bash
+docker stop my-t6-server
+```
+
+## Customizing Your Server (Work in progress)
+The power of this Docker setup comes from using **volumes** to mount your local files and folders into the container. This is an alternative to editing files inside the container with `docker exec`. It allows you to manage your server configuration, mods, and scripts on your host machine.
+
+Here are some common examples:
+
+### Using a Custom `dedicated.cfg`
+To use a config file from your host machine:
+1. Create a file named `dedicated.cfg` on your host.
+2. When you run your container, mount your file to the correct location:
+```bash
+# The -v flag mounts your local file into the container
+docker run -d \
+  -p 4976:4976/udp \
+  -v ./dedicated.cfg:/opt/T6Server/Server/Multiplayer/main/dedicated.cfg \ # TODO: make sure this path is correct
+  --name my-t6-server \
+  t6-server
+```
+Now, any changes you make to your local `dedicated.cfg` will be reflected inside the container.
+
+### Adding Custom Mods and Scripts (Work in progress)
+You can mount entire folders, which is perfect for mods and scripts.
+
+1. Create a folder on your host machine for your mods (e.g., `my_server_files/mods`).
+2. In your `Dockerfile`, set the `MOD` environment variable to point to your mod folder. For example:
+   ```dockerfile
+   # In Dockerfile
+   ENV MOD="mods/my_awesome_mod"
    ```
+3. Build (or rebuild) your image with the updated `MOD` variable.
+4. Run your container, mounting your local mods folder into the container:
+```bash
+docker run -d \
+  -p 4976:4976/udp \
+  -v ./my_server_files/mods:/opt/T6Server/Plutonium/storage/t6/mods \
+  --name my-t6-server \
+  t6-server
+```
+When you run `./T6Server.sh`, it will now automatically load the mod you specified in your `Dockerfile`.
 
-2. To install git:
-   ```bash
-   sudo apt install git
-   ```
+## Advanced Configuration
 
-These commands will ensure you have the necessary software to proceed with the installation.
+### Custom Mods and Maps (Work in progress)
+To use custom mods or maps, you need to mount local directories from your host machine into the container using Docker volumes. This makes your local files available inside the container.
 
-### Network Requirements
-- **Internet Connection:** Stable broadband connection
-- **Firewall:** Ability to open and forward necessary ports
-- **Static IP:** Recommended for consistent server accessibility
+For example, if you have a `mods` folder on your host at `/home/user/t6_mods`, you would run the container like this:
 
-### Additional Considerations
-- Basic familiarity with Linux command line
-- Understanding of server administration concepts
-- Willingness to troubleshoot potential issues
+```bash
+docker run -d \
+  -p 4976:4976/udp \
+  -v /home/user/t6_mods:/opt/T6Server/Plutonium/storage/t6/mods \
+  --name my-t6-server \
+  t6-server
+```
+You can mount multiple volumes for different types of content (maps, scripts, etc.).
 
-Ensure all prerequisites are met before proceeding with the installation to guarantee a smooth setup process.
-
-## Installation
-
-1. Navigate to the application installation directory:
-   ```bash
-   cd /opt
-   ```
-
-2. Download and extract T6Server archive in a single command:
-   ```bash
-   mkdir -p T6Server && wget -O T6Server.tar.gz https://github.com/Sterbweise/T6Server/releases/download/v3.1.1/T6Server.tar.gz && tar -xzvf T6Server.tar.gz -C T6Server && rm T6Server.tar.gz
-   ```
-
-3. Move into the newly created T6Server directory:
-   ```bash
-   cd T6Server
-   ```
-
-4. Make the script executable:
-   ```bash
-   chmod +x install.sh
-   ```
-
-5. Launch the installation script with sudo privileges:
-   ```bash
-   sudo ./install.sh
-   ```
-
-6. Follow the on-screen instructions to complete the installation. The script will guide you through:
-   - Language selection
-   - UFW firewall installation and configuration
-   - SSH port configuration
-   - .NET installation (optional, required for IW4MAdmin)
-   - Wine installation
-   - Game binary installation
-
-## Configuration
-
-After installation, the primary configuration file to modify is `/opt/T6Server/T6Server.sh`. This file contains essential settings for your Plutonium Call of Duty: Black Ops II server. Below are the key variables you should configure:
-
-| Variable    | Description                                           | Default Value              |
-|-------------|-------------------------------------------------------|----------------------------|
-| SERVER_NAME | The name of your server as it appears in server lists | "SERVER_NAME"              |
-| GAME_PATH   | Path to your game files (Multiplayer or Zombie mode)  | "/opt/T6Server/Server/Multiplayer" |
-| SERVER_KEY  | Your unique Plutonium server key                      | "YOURKEY"                  |
-| CONFIG_FILE | Server configuration file (mode-specific)             | "dedicated.cfg"            |
-| SERVER_PORT | UDP port your server will listen on                   | 21889                       |
-| GAME_MODE   | Game mode selection ("t6mp" or "t6zm")                | "t6mp"                     |
-| MOD         | Path to your MOD directory (optional)                 | ""                         |
-| ADDITIONAL_PARAMS | Additional parameters for the server (optional) | ""                         |
-
-To configure your server:
-
-1. Open the configuration file:
-   ```bash
-   nano /opt/T6Server/Plutonium/T6Server.sh
-   ```
-
-2. Modify the variables according to your preferences. For example:
-   ```bash
-   readonly SERVER_NAME="My Awesome T6 Server" # The name of your server
-   readonly SERVER_KEY="your_server_key" # Key provided by Plutonium
-   readonly SERVER_PORT=4976 # Default port for T6 servers
-   readonly GAME_MODE="t6mp" # "t6mp" for Multiplayer, "t6zm" for Zombies
-   readonly MOD="mods/weapons" # MOD path
-   readonly ADDITIONAL_PARAMS="" # Additional parameters for the server
-   ```
-
-3. Save the file and exit the editor by pressing `Ctrl+x`, then `Y` to confirm, and Enter to save.
-
-Note: For Zombie mode, set `GAME_PATH` to "/opt/T6Server/Server/Zombie", `CONFIG_FILE` to "dedicated_zm.cfg", and `GAME_MODE` to "t6zm". Also, set the `MOD` variable to the path of the Zombie mode MOD.
-
-Ensure all settings are correctly configured before launching your server.
-
-### New Server Parameters
-- `sv_allowAimAssist`: Enable/disable aim assist (default: 1)
-- `sv_securityLevel`: Server security level (recommended: 23)
-- `sv_kickBareGUID`: Kicks players without valid GUID
-- `sv_allowDof`: Controls depth of field effect
-
-### Default Ports
-- T6 (Black Ops II): 21889 (UDP)
 ### Directory Structure
+Here are the key directories inside the container where you can mount your custom content:
 
 | Directory | Path | Description |
 |-----------|------|-------------|
@@ -203,236 +191,29 @@ Ensure all settings are correctly configured before launching your server.
 | **Config - Multiplayer** | `/opt/T6Server/Server/Multiplayer/main/configs/` | Multiplayer configuration files |
 | **Config - Zombie** | `/opt/T6Server/Server/Zombie/main/configs/` | Zombie mode configuration files |
 | **Logs** | `/opt/T6Server/Plutonium/storage/t6/logs/` | Server log files |
-| **Stats** | `/opt/T6Server/Plutonium/storage/t6/stats/` | Player statistics |
-| **Playlists** | `/opt/T6Server/Plutonium/storage/t6/playlists/` | Custom game playlists |
-| **Game Settings** | `/opt/T6Server/Plutonium/storage/t6/gamesettings/` | Game mode settings |
-| **Player Data** | `/opt/T6Server/Plutonium/storage/t6/players/` | Player-specific data |
 | **Scripts** | `/opt/T6Server/Plutonium/storage/t6/scripts/` | Custom game scripts |
 | **Maps - Multiplayer** | `/opt/T6Server/Server/Multiplayer/usermaps/` | Custom multiplayer maps |
 | **Maps - Zombie** | `/opt/T6Server/Server/Zombie/usermaps/` | Custom zombie maps |
 
-To change maps:
-1. Edit the appropriate configuration file:
-   - Multiplayer: `/opt/T6Server/Server/Multiplayer/main/dedicated.cfg`
-   - Zombie: `/opt/T6Server/Server/Zombie/main/dedicated_zm.cfg`
-
-### File Organization
-For proper server organization, place files in these specific directories:
-
-#### Custom Mods
-1. Place mod files in `/opt/T6Server/Plutonium/storage/t6/mods/`
-2. Enable mods by adding to server config:
-   ```cfg
-   set sv_enablemods "1"
-   set fs_game "mods/mod_name"
-   ```
-
-#### Custom Maps
-1. Place custom map files in their respective directories:
-   - Multiplayer maps: `/opt/T6Server/Server/Multiplayer/usermaps/`
-   - Zombie maps: `/opt/T6Server/Server/Zombie/usermaps/`
-
-2. Load custom maps by adding them to the map rotation in the config files:
-   ```cfg
-   // For Multiplayer (in dedicated.cfg)
-   sv_maprotation "map usermaps/custom_map_name map mp_nuketown_2020"
-   sv_maprotationcurrent ""
-   
-   // For Zombies (in dedicated_zm.cfg) 
-   sv_maprotation "map usermaps/custom_zombie_map"
-   sv_maprotationcurrent ""
-   ```
-
-3. Map file organization:
-   - Map files (.ff extension) go directly in the usermaps folder
-   - Supporting files like textures and models should be in a subfolder with the same name as the map
-   - Example structure:
-     ```
-     usermaps/
-     ├── custom_map.ff
-     └── custom_map/
-         ├── textures/
-         ├── models/
-         └── other assets/
-     ```
-
-4. Important notes:
-   - Maps must be in the correct format (.ff files)
-   - File permissions should be set to allow server read access
-   - Map names in rotation must exactly match the filename (without .ff)
-   - Restart server after adding new maps
-
-
-## Launching the Server
-
-To launch your Plutonium Call of Duty: Black Ops II server, follow these professional steps:
-
-1. Navigate to the T6Server installation directory:
-   ```bash
-   cd /opt/T6Server/Plutonium
-   ```
-
-2. Ensure the start script has the necessary execution permissions:
-   ```bash
-   sudo chmod +x T6Server.sh
-   ```
-
-3. Launch the server:
-   ```bash
-   ./T6Server.sh
-   ```
-
-For advanced server management:
-- To run multiple servers concurrently, utilize terminal multiplexers such as `tmux` or `screen`.
-- For background operation, you can use the `nohup` command:
-  ```bash
-  nohup ./T6Server.sh > server.log 2>&1 &
-  ```
-  This will run the server in the background, redirecting output to `server.log`.
-
-Note: Ensure all necessary configurations in `server.cfg` and other relevant files are properly set before launching the server.
-
 ## Troubleshooting
 
-This section provides solutions to common issues you may encounter while setting up and running your Plutonium Call of Duty: Black Ops II server. Follow these detailed steps to resolve problems efficiently.
-
-### Wine Display Errors
-
-**Issue**: You may see error messages related to Wine display when starting the server.
-
-**Solution**: These errors are not critical and can be safely ignored. The Plutonium server operates as a console application and does not require graphical support. Your server will function correctly despite these messages.
-
-**Note for debugging**: By default, Wine errors are hidden. If you need to debug Wine-related issues, you can remove the `2>/dev/null` at the end of the server start command in `T6Server.sh`. This will allow Wine errors to be displayed, which can be helpful for troubleshooting.
-
-### Unable to Load Import from binkw32.dll
-
-**Issue**: An error occurs when the server attempts to load binkw32.dll.
-
-**Solution**: 
-1. Verify the `PAT` variable in `T6Server.sh`:
-   - Open the file: `nano /opt/T6Server/T6Server.sh`
-   - Ensure the `PAT` variable is correctly set to your server's path, pointing to the directory containing binkw32.dll:
-     - For Multiplayer: `/opt/T6Server/Server/Multiplayer`
-     - For Zombie mode: `/opt/T6Server/Server/Zombie`
-2. Correct file permissions:
-   ```bash
-   sudo chmod -R 755 /opt/T6Server
-   ```
-3. If the issue persists, try reinstalling the game binaries using the installation script.
-
-### Server Not Appearing in Plutonium Server List
-
-**Issue**: Your server is running but not visible to players in the Plutonium server list.
-
-**Solution**:
-1. Verify port accessibility:
-   - Ensure the server port (default: 4976) is open for UDP traffic
-   - Use a port checking tool to confirm the port is reachable from the internet
-2. Configure your firewall:
-   ```bash
-   sudo ufw allow 4976/udp comment "Plutonium-Server"
-   sudo ufw reload
-   ```
-3. If behind a NAT:
-   - Configure port forwarding on your router
-   - Forward UDP port 4976 to your server's local IP address
-4. Verify server configuration:
-   - Check `server.cfg` for correct settings
-   - Ensure `sv_lanOnly` is set to 0
-
-### Authentication Issues
-
-**Issue**: You encounter authentication errors when starting the server.
-
-**Solution**:
-1. Verify your Plutonium key:
-   - Log in to your Plutonium account at https://platform.plutonium.pw/serverkeys
-   - Confirm your key is valid and not expired
-2. Check key placement:
-   - Open `T6Server.sh`
-   - Ensure the `SERVER_KEY` variable contains your correct key
-3. If issues persist:
-   - Reinstall game binaries using the installation script
-   - Update Plutonium to the latest version
-
-For additional assistance, consult the [Plutonium forums](https://forum.plutonium.pw/) or join the [Plutonium Discord](https://discord.gg/plutonium) community.
+- **Server not appearing in list:**
+  - Ensure you have correctly mapped the port with `-p <host_port>:<container_port>/udp`.
+  - Check your firewall/router settings to ensure the host port is open to the internet.
+  - Double-check that your `SERVER_KEY` is correct in the `Dockerfile`.
+- **Docker command errors:**
+  - Make sure the Docker daemon is running.
+  - Check for typos in your `docker` commands.
+- **Container won't start:**
+  - Use `docker logs my-t6-server` (without `-f`) to check for any startup errors.
 
 ## Documentation
 
-For more detailed information on server configuration, configuration options, and advanced features, please refer to our [Wiki](https://github.com/Sterbweise/T6Server/wiki).
+For more detailed information on Plutonium server configuration and options, please refer to the original project's [Wiki](https://github.com/Sterbweise/T6Server/wiki).
 
 ## Contributing
 
-I appreciate contributions from the community! Here are some ways you can contribute to the T6 Server project:
-
-### Submitting Pull Requests
-
-1. Fork the repository and create your branch from `main`.
-2. If you've added code that should be tested, add tests.
-3. Ensure your code follows the existing style to maintain consistency.
-4. Update the documentation if you've made changes that affect it.
-5. Write a clear and descriptive commit message.
-6. Open a pull request with a comprehensive description of the changes.
-
-### Ideas for Contributions
-
-- Implement additional server configuration options
-- Improve error handling and logging
-- Enhance the user interface of the management scripts
-- Optimize server performance
-- Improve compatibility with different Debian versions or other Linux distributions
-- Create additional language localizations
-
-### Reporting Issues
-
-- Use the GitHub issue tracker to report bugs
-- Provide a clear and detailed description of the issue
-- Include steps to reproduce the problem
-- Specify your operating system and relevant software versions
-
-### Improving Documentation
-
-- Help improve the README, wiki, or inline code documentation
-- Write tutorials or guides for setting up and managing servers
-- Create or improve troubleshooting guides
-
-### Code Review
-
-- Review pull requests from other contributors
-- Provide constructive feedback and suggestions
-
-I strive to make contributing to T6 Server a positive experience for everyone.
-
-Thank you for helping make T6 Server better!
-
-## Roadmap
-
-T6 Server focuses on enhancing stability, improving user experience, and expanding functionality. Here's what we're planning:
-
-### Short-term Goals (1-3 months)
-
-- [x] Resolve installation issues on various Debian-based distributions
-  - [x] Fix dependency conflicts
-  - [x] Improve error handling during installation
-  - [ ] Create detailed troubleshooting guides
-- [ ] Enhance debugging capabilities
-  - [ ] Implement verbose logging options
-  - [ ] Create a diagnostic tool for common issues
-- [ ] Optimize server performance
-  - [ ] Reduce resource usage
-  - [ ] Improve startup and shutdown times
-
-### Medium-term Goals (3-6 months)
-
-- [ ] Simplify multi-server management
-- [ ] Enhance configuration options
-  - [ ] Add more customizable server settings
-  - [ ] Create configuration templates for popular game modes
-- [ ] Improve update mechanism
-  - [ ] Implement automatic updates with rollback capability
-  - [ ] Add delta updates to reduce bandwidth usage
-
-I'm committed to continuously improving T6 Server based on user feedback and community needs. If you encounter any issues or have suggestions, please don't hesitate to open an issue or contribute to the project!
+Contributions are welcome, please feel free to fork the repository, make changes, and submit a pull request.
 
 ## License
 
@@ -440,26 +221,16 @@ This project is licensed under the GPL-3.0 License - see the [LICENSE](LICENSE) 
 
 ## Acknowledgements
 
-I would like to express my sincere gratitude to the following projects and their creators for their invaluable contributions to the T6 Server project:
-
-- [Plutonium](https://plutonium.pw): For their exceptional work on the T6 client and server, which forms the foundation of our project. Their dedication to preserving and enhancing classic Call of Duty titles is commendable.
-
-- [IW4MAdmin](https://github.com/RaidMax/IW4M-Admin): I extend my thanks to RaidMax and the IW4MAdmin team for their comprehensive administration tools. Their robust solution significantly enhances server management capabilities.
-
-- [plutonium-updater](https://github.com/mxve/plutonium-updater.rs): Special recognition goes to mxve for developing the plutonium-updater. This tool has been instrumental in streamlining our server update process, ensuring that our servers always run the latest version with minimal downtime.
-
-These projects have been crucial in the development and ongoing improvement of T6 Server. I am deeply appreciative of the hard work and dedication of all contributors involved in these projects.
+- **Sterbweise**: For creating the original, comprehensive [T6Server](https://github.com/Sterbweise/T6Server) project.
+- **Plutonium**: For their exceptional work on the T6 client and server.
+- **plutonium-updater**: For the tool that streamlines server updates.
 
 ## Support
 
-For support, please contact:
-
-- Email: [contact@sterbweise.dev](mailto:contact@sterbweise.dev)
-- Telegram: [@SG991](https://t.me/SG991)
-- Discord: [Sterbweise](https://discord.com/users/sterbweise/)
-
-You can also open an issue on this repository for bug reports or feature requests.
+For support, please open an issue on this repository.
 
 ---
 
-Developed with ❤️ by [Sterbweise](https://github.com/Sterbweise)
+Installer Developed with ❤️ by [Sterbweise](https://github.com/Sterbweise)
+
+Dockerized with ❤️ by [bfive](https://github.com/bfive)

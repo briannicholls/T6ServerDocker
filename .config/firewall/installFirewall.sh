@@ -14,38 +14,33 @@ fi
 # Function to install firewall
 installFirewall() {
     local ssh_port="$1"
-    {
-        # Check if UFW is already installed
-        if ! command -v ufw &> /dev/null; then
-            apt install ufw -y
-        fi
+    echo "Configuring firewall..."
+    # Check if UFW is already installed
+    if ! command -v ufw &> /dev/null; then
+        apt install ufw -y
+    fi
 
-        # Check if fail2ban is already installed
-        if ! command -v fail2ban-client &> /dev/null; then
-            apt install fail2ban -y
-        fi
+    # Check if fail2ban is already installed
+    if ! command -v fail2ban-client &> /dev/null; then
+        apt install fail2ban -y
+    fi
 
-        # Configure UFW
-        ufw allow "$ssh_port"/tcp
-        ufw default allow outgoing
-        ufw default deny incoming
-        ufw -f enable
-    } > /dev/null 2>&1 &
-    showProgressIndicator "$(getMessage "firewall_install")"
-    
+    # Configure UFW
+    ufw allow "$ssh_port"/tcp
+    ufw default allow outgoing
+    ufw default deny incoming
+    ufw -f enable
+
     # Verify installation
     if ! command -v ufw &> /dev/null || ! command -v fail2ban-client &> /dev/null
     then
         printf "${COLORS[RED]}Error:${COLORS[RESET]} Firewall installation failed.\n"
         printf "Attempting reinstallation...\n"
-        {
-            apt install ufw fail2ban -y
-            ufw allow "$ssh_port"/tcp
-            ufw default allow outgoing
-            ufw default deny incoming
-            ufw -f enable
-        } > /dev/null 2>&1 &
-        showProgressIndicator "$(getMessage "firewall_reinstall")"
+        apt install ufw fail2ban -y
+        ufw allow "$ssh_port"/tcp
+        ufw default allow outgoing
+        ufw default deny incoming
+        ufw -f enable
         
         if ! command -v ufw &> /dev/null || ! command -v fail2ban-client &> /dev/null
         then
@@ -57,6 +52,7 @@ installFirewall() {
     if [ "$1" = "--install" ]; then
         printf "${COLORS[GREEN]}Success:${COLORS[RESET]} Firewall has been installed and configured.\n"
     fi
+    echo "Firewall configuration finished."
 }
 
 # Run the installation function if --install or --import is provided

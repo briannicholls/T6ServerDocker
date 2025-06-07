@@ -13,69 +13,25 @@ fi
 
 # Function to install Wine
 installWine() {
-    {
-        # Add Wine repository key if it doesn't exist
-        if [ ! -f /etc/apt/keyrings/winehq-archive.key ]; then
-            sudo mkdir -pm755 /etc/apt/keyrings
-            sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
-        fi
+    echo "Installing Wine..."
+    # Add WineHQ repository key
+    mkdir -p /etc/apt/keyrings
+    wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
 
-        # Add Wine repository sources based on Debian version
-        case "$VERSION" in
-            "12") SYSTEM_VERSION="bookworm" ;;
-            "11") SYSTEM_VERSION="bullseye" ;;
-            "10") SYSTEM_VERSION="buster" ;;
-            *) 
-                echo "Unsupported Debian version. Using bullseye sources by default."
-                SYSTEM_VERSION="bullseye"
-                ;;
-        esac
-
-        SOURCES_FILE="/etc/apt/sources.list.d/winehq-${SYSTEM_VERSION}.sources"
-        if [ ! -f "$SOURCES_FILE" ]; then
-            SOURCES_URL="https://dl.winehq.org/wine-builds/debian/dists/${SYSTEM_VERSION}/winehq-${SYSTEM_VERSION}.sources"
-            sudo wget -O "$SOURCES_FILE" "$SOURCES_URL"
-        fi
-
-        # Update package list and install Wine
-        if ! dpkg -l | grep -q winehq-stable; then
-            sudo apt update -y
-            sudo apt install --install-recommends winehq-stable -y
-        fi
-
-        # Configure Wine environment
-        if [ ! -d "$HOME/.wine" ]; then
-            # Add Wine environment variables if they don't exist
-            declare -A wine_vars=(
-                ["WINEPREFIX"]="$HOME/.wine"
-                ["WINEDEBUG"]="-all"
-                ["WINEARCH"]="win64"
-                ["WINEESYNC"]="1"
-                ["WINEFSYNC"]="1"
-                ["WINEDLLOVERRIDES"]="mscoree,mshtml="
-            )
-
-            for var in "${!wine_vars[@]}"; do
-                if ! grep -q "$var" "$HOME/.bashrc"; then
-                    echo "export $var=${wine_vars[$var]}" >> "$HOME/.bashrc"
-                fi
-            done
-            
-            # Apply changes to current session
-            source "$HOME/.bashrc"
-            
-            # Run Wine configuration
-            winecfg
-        fi
-    } > /dev/null 2>&1 &
-    showProgressIndicator "$(getMessage "wine")"
+    # Add WineHQ repository
+    SYSTEM_VERSION=$(grep "VERSION_CODENAME" /etc/os-release | cut -d'=' -f2)
+    wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/${SYSTEM_VERSION}/winehq-${SYSTEM_VERSION}.sources
     
-    # Verify installation
-    if ! command -v wine &> /dev/null; then
-        printf "${COLORS[RED]}Error:${COLORS[RESET]} Wine installation failed.\n"
-        printf "You can try running the installation script separately by executing:\n"
-        printf "cd .config/wine && ./wine-install.sh\n"
-    fi
+    # Update package list and install Wine
+    apt-get update
+    apt-get install -y --install-recommends winehq-stable
+
+    # Set up Wine environment for the root user non-interactively
+    echo "Initializing Wine prefix..."
+    export WINEPREFIX=/root/.wine
+    wineboot -i > /dev/null 2>&1
+    
+    echo "Wine installation finished."
 }
 
 # Run the installation function if --install is provided
