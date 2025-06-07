@@ -70,6 +70,11 @@ finishInstallation() {
         printf "   ⚬ SSH Port (%s): %s\n" "${ssh_port:-22}" \
             "$(netstat -tuln | grep ":${ssh_port:-22}" > /dev/null && echo "${COLORS[GREEN]}Open${COLORS[RESET]}" || echo "${COLORS[RED]}Closed${COLORS[RESET]}")"
     fi
+
+    # In a non-interactive environment, we just exit.
+    if [ "$INTERACTIVE" != "yes" ]; then
+      exit 0
+    fi
     
     # Wait for user acknowledgment
     printf "\n${COLORS[YELLOW]}Press any key to exit...${COLORS[RESET]}"

@@ -30,18 +30,16 @@ if [[ $UID != 0 ]]; then
     exit 1
 fi
 
-# Language selection
-# Allows users to choose their preferred language for script messages
-showLogo
-selectLanguage
+# Check if we are running in interactive mode
+# if [ "$INTERACTIVE" = "yes" ]; then
+    # # Language selection
+    # showLogo
+    # selectLanguage
 
-# Ask for installation options
-# Prompts the user for specific components they want to install
-showLogo
-confirmInstallations
-
-# Show logo
-showLogo
+    # # Ask for installation options
+    # showLogo
+    # confirmInstallations
+# fi
 
 # Update the system
 # Ensures the system is up-to-date before proceeding with the installation
@@ -53,7 +51,7 @@ installDependencies
 
 # Configure firewall if requested
 # Sets up firewall rules to allow server traffic if the user opts for it
-if [[ "$firewall" =~ ^[yYoO]$ ]] || [[ -z "$firewall" ]]; then
+if [[ "$firewall" =~ ^[yY][eE][sS]$ ]] || [[ "$firewall" =~ ^[yYoO]$ ]] || [[ -z "$firewall" ]]; then
     installFirewall "$ssh_port"
 fi
 
@@ -65,11 +63,10 @@ enable32BitPackages
 # Necessary for running Windows executables on Linux
 installWine
 
-# Install Dotnet if requested
-# Required for certain server functionalities
-if [[ "$dotnet" =~ ^[yYoO]$ ]] || [[ -z "$dotnet" ]]; then
-    installDotnet
-fi
+# # Install Dotnet if requested (disabled)
+# if [[ "$dotnet" =~ ^[yY][eE][sS]$ ]] || [[ "$dotnet" =~ ^[yYoO]$ ]] || [[ -z "$dotnet" ]]; then
+#     installDotnet
+# fi
 
 # Install game binaries
 # Downloads and sets up the necessary game files for the server
@@ -81,5 +78,5 @@ finishInstallation
 
 # Reset terminal settings and exit
 # Ensures the terminal is left in a clean state after script execution
-stty -igncr
+# stty -igncr
 exit

@@ -13,29 +13,9 @@ fi
 
 # Function to enable 32-bit architecture support
 enable32BitPackages() {
-    {
-        if ! dpkg --print-foreign-architectures | grep -q i386; then
-            dpkg --add-architecture i386
-            apt-get update -y
-        fi
-    } > /dev/null 2>&1 &
-    showProgressIndicator "$(getMessage "bit")"
-    
-    # Verify installation
-    if ! dpkg --print-foreign-architectures | grep -q i386; then
-        printf "${COLORS[RED]}Error:${COLORS[RESET]} 32-bit package activation failed.\n"
-        printf "Attempting reactivation...\n"
-        dpkg --add-architecture i386
-        apt-get update -y
-        if ! dpkg --print-foreign-architectures | grep -q i386; then
-            printf "${COLORS[RED]}Error:${COLORS[RESET]} Reactivation failed. Please check your system and try again.\n"
-            exit 1
-        fi
-    fi
-
-    if [ "$1" = "--enable" ]; then
-        printf "${COLORS[GREEN]}Success:${COLORS[RESET]} 32-bit architecture support has been enabled.\n"
-    fi
+    echo "Enabling 32-bit packages support (multi-arch)..."
+    dpkg --add-architecture i386
+    echo "32-bit packages support enabled."
 }
 
 # Run the enable function if --enable is provided
