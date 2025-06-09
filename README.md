@@ -109,7 +109,6 @@ Here is the full workflow:
 
 3.  **Rebuild your Docker image with the new configuration:**
     ```bash
-    # This will be fast thanks to layer caching!
     docker build -t t6-server .
     ```
 

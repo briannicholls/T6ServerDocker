@@ -105,6 +105,7 @@ start_server() {
             +set key "$SERVER_KEY" \
             +set fs_game "$MOD" \
             +set net_port "$SERVER_PORT" \
+            +set net_ip 0.0.0.0 \
             +exec "$CONFIG_FILE" \
             $ADDITIONAL_PARAMS \
             +map_rotate \
