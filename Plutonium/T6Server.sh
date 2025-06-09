@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# T6Server.sh - Plutonium Call of Duty: Black Ops II Server Script
-# Version: 3.1.1
+# T6Server.sh - Enhanced Plutonium Call of Duty: Black Ops II Server Script
+# Version: 3.1.1-dockerized
 # Author: Sterbweise
 # Last Updated: 07/12/2024
 
@@ -74,6 +74,8 @@ ADDITIONAL_PARAMS="${ADDITIONAL_PARAMS:-}"
 #     +set sv_anticheat 1
 #     +set sv_pure 1
 
+# Generate configuration files from environment variables
+"$SCRIPT_DIR/generate_configs.sh"
 
 # Function to update server files
 # This function uses the Plutonium updater to ensure your server is running the latest version
