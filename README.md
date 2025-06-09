@@ -20,6 +20,7 @@ This project provides a Dockerized solution for running a Plutonium Call of Duty
 - [Features](#features)
 - [Prerequisites](#prerequisites)
 - [Quick Start](#quick-start)
+- [Applying Configuration Changes](#applying-configuration-changes)
 - [Alternative Configurations](#alternative-configurations)
 - [Configuration Options](#configuration-options)
 - [Server Management](#server-management)
@@ -89,6 +90,43 @@ cd /opt/T6Server/Plutonium
 ```
 
 Your server is now running!
+
+## Applying Configuration Changes
+
+If you change any of the `ENV` variables in your `Dockerfile`, you need to rebuild the image and restart the container for the changes to take effect.
+
+Here is the full workflow:
+
+1.  **Stop the running container:**
+    ```bash
+    docker stop my-t6-server
+    ```
+
+2.  **Remove the old container:**
+    ```bash
+    docker rm my-t6-server
+    ```
+
+3.  **Rebuild your Docker image with the new configuration:**
+    ```bash
+    # This will be fast thanks to layer caching!
+    docker build -t t6-server .
+    ```
+
+4.  **Run a new container with the updated settings:**
+    ```bash
+    docker run -d \
+      --name my-t6-server \
+      -p 4976:4976/udp \
+      t6-server
+    ```
+
+5.  **Start the server process inside the new container:**
+    ```bash
+    docker exec -it my-t6-server bash
+    cd /opt/T6Server/Plutonium
+    ./T6Server.sh
+    ```
 
 ## Alternative Configurations
 
