@@ -12,6 +12,7 @@ SERVER_MESSAGE="${SERVER_MESSAGE:-Welcome to the server!}"
 KILLCAM="${KILLCAM:-1}"
 VOTE_KICK="${VOTE_KICK:-1}"
 TEAM_BALANCE="${TEAM_BALANCE:-1}"
+RCON_PASSWORD="${RCON_PASSWORD:-}" # Default to empty if not set
 
 # Create directories if they don't exist
 mkdir -p "$GAMESETTINGS_DIR"
@@ -22,30 +23,47 @@ generate_dedicated_cfg() {
 // Generated T6 Server Configuration
 // Auto-generated from Docker environment variables
 
-// Server Identity
+//////////////////////////////////////////////////
+// Server Identity & General Settings
+//////////////////////////////////////////////////
 set sv_hostname "$SERVER_NAME"
 set sv_motd "$SERVER_MESSAGE"
 set sv_maxclients $MAX_PLAYERS
+set sv_voice "1"                                    // Enable Voice Chat (1 = On, 0 = Off)
+set sv_voicequality "3"                             // Voice Chat Quality. (0-9) Default is 3. Use 9 for best quality.
+set sv_allowAimAssist 1                             // Allow Aim Assist for gamepads.
+set sv_allowDof 0                                   // Disallow Depth of Field to prevent glitches (0 = force off).
+set demo_enabled 1                                  // Record matches as demo files.
+set sv_sayname "Console"                            // Name for server-side 'say' commands.
 
-// Network Settings
-set dedicated 2
-set net_port $SERVER_PORT
+//////////////////////////////////////////////////
+// RCON & Admin Tool Settings
+//////////////////////////////////////////////////
+g_logSync 2                                     // Flush log file after every write. REQUIRED for admin tools.
+g_log "logs/games_mp.log"                       // Log file name.
+rcon_password "$RCON_PASSWORD"                  // Remote control password for tools like IW4MAdmin.
+rcon_rate_limit "500"                           // Rate limit RCon in ms.
+rcon_localhost_bypass 1                         // Localhost bypasses RCon rate limits.
 
-// Game Mode Settings
-$(generate_map_rotation)
-
-// Basic Gameplay
+//////////////////////////////////////////////////
+// Gameplay Settings
+//////////////////////////////////////////////////
 set scr_hardcore $([ "$HARDCORE_MODE" = "true" ] && echo "1" || echo "0")
 set scr_friendlyfire $FRIENDLY_FIRE
 set scr_killcam $KILLCAM
 set g_allowvote $VOTE_KICK
 set scr_teambalance $TEAM_BALANCE
-
-// Spectator Settings
-set g_spectatorInactivity 0
+set g_spectatorInactivity 0                     // No inactivity kick for spectators.
 set scr_spectatorInactivity 0
 
+//////////////////////////////////////////////////
+// Map Rotation
+//////////////////////////////////////////////////
+$(generate_map_rotation)
+
+//////////////////////////////////////////////////
 // Additional custom parameters
+//////////////////////////////////////////////////
 $ADDITIONAL_PARAMS
 EOF
 }

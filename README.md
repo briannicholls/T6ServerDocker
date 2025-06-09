@@ -169,6 +169,7 @@ All configuration is done through environment variables in the Dockerfile:
 | `HARDCORE_MODE` | Hardcore mode | `"false"` | `"true"`/`"false"` |
 | `FRIENDLY_FIRE` | Team damage | `"0"` | `"0"`/`"1"` |
 | `MOD` | Custom mod folder | `""` | `"mods/modname"` |
+| `RCON_PASSWORD` | Remote control password | `""` | Any string |
 
 ### Game Types
 - **`tdm`** - Team Deathmatch (default)

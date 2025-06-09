@@ -53,6 +53,7 @@ ENV FRIENDLY_FIRE="0"
 
 # Advanced Settings
 ENV MOD=""
+ENV RCON_PASSWORD=""
 ENV ADDITIONAL_PARAMS=""
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

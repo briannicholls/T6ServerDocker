@@ -39,7 +39,7 @@ RUN chmod +x install.sh && ./install.sh
 
 # Basic Server Settings (REQUIRED)
 ENV SERVER_NAME="(\$MLG)B5's Server"
-ENV SERVER_KEY="YOUR_SERVER_KEY"
+ENV SERVER_KEY=""
 
 # Game Mode Configuration  
 ENV GAME_MODE="t6mp"
@@ -56,6 +56,7 @@ ENV FRIENDLY_FIRE="0"
 
 # Advanced Settings (OPTIONAL)
 ENV MOD=""
+ENV RCON_PASSWORD="required_for_iw4m_admin"
 ENV ADDITIONAL_PARAMS=""
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
