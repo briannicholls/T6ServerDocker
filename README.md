@@ -112,15 +112,7 @@ Here is the full workflow:
     docker build -t t6-server .
     ```
 
-4.  **Run a new container with the updated settings:**
-    ```bash
-    docker run -d \
-      --name my-t6-server \
-      -p 4976:4976/udp \
-      t6-server
-    ```
-
-5.  **Start the server process inside the new container:**
+4.  **Start the server process inside the new container:**
     ```bash
     docker exec -it my-t6-server bash
     cd /opt/T6Server/Plutonium
@@ -163,9 +155,9 @@ All configuration is done through environment variables in the Dockerfile:
 | `SERVER_NAME` | Your server name | `"(\$MLG)B5's Server"` | Any string |
 | `SERVER_KEY` | **Plutonium key** | `"YOUR_KEY_HERE"` | Get from [plutonium.pw](https://platform.plutonium.pw/serverkeys) |
 | `GAME_TYPE` | Game mode | `"tdm"` | `"tdm"`, `"dom"`, `"snd"`, `"kc"` |
-| `MAX_PLAYERS` | Player limit | `"18"` | `"1"` to `"18"` |
-| `MAP_ROTATION` | Map list | Popular maps | Space-separated map codes |
-| `HARDCORE_MODE` | Hardcore mode | `"false"` | `"true"`/`"false"` |
+| `MAX_PLAYERS` | Player limit | `"2"` | `"1"` to `"18"` |
+| `MAP_ROTATION` | Map list | `"mp_carrier"` | Space-separated map codes |
+| `HARDCORE_MODE` | Hardcore mode | `"true"` | `"true"`/`"false"` |
 | `FRIENDLY_FIRE` | Team damage | `"0"` | `"0"`/`"1"` |
 | `MOD` | Custom mod folder | `""` | `"mods/modname"` |
 | `RCON_PASSWORD` | Remote control password | `""` | Any string |
@@ -221,7 +213,7 @@ To use custom mods or maps, mount local directories into the container:
 ```bash
 docker run -d \
   --name my-t6-server \
-  -p 4976:4976/udp \
+  -p 4976:4967/udp \
   -v ./my_mods:/opt/T6Server/Plutonium/storage/t6/mods \
   -v ./my_maps:/opt/T6Server/Server/Multiplayer/usermaps \
   t6-server
@@ -294,3 +286,4 @@ For support, please open an issue on this repository.
 Installer Developed with ❤️ by [Sterbweise](https://github.com/Sterbweise)
 
 Dockerized with ❤️ by [bfive](https://github.com/bfive)
+
